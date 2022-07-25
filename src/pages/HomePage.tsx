@@ -14,7 +14,7 @@ export function HomePage(): JSX.Element {
   }
 
   return (
-    <Document>
+    <Document data-testid="home-page">
       <h1>Welcome {formatGivenName(profile.name?.[0] as HumanName)}</h1>
       <h2>
         <Link to="/Patient">Patients</Link>

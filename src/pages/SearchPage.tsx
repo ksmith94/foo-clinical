@@ -1,5 +1,12 @@
-import { DEFAULT_SEARCH_COUNT, Filter, parseSearchDefinition, SearchRequest, SortRule } from '@medplum/core';
-import { UserConfiguration } from '@medplum/fhirtypes';
+import {
+  DEFAULT_SEARCH_COUNT,
+  Filter,
+  parseSearchDefinition,
+  SearchRequest,
+  SortRule,
+  formatSearchQuery,
+} from '@medplum/core';
+import { ResourceType, UserConfiguration } from '@medplum/fhirtypes';
 import { Loading, MemoizedSearchControl, useMedplum } from '@medplum/react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -14,9 +21,16 @@ export function SearchPage(): JSX.Element {
     const parsedSearch = parseSearchDefinition(location.pathname + location.search);
     const populatedSearch = addDefaultSearchValues(parsedSearch, medplum.getUserConfiguration());
 
-    saveLastSearch(populatedSearch);
-    setSearch(populatedSearch);
-  }, [medplum, location]);
+    if (
+      location.pathname === `/${populatedSearch.resourceType}` &&
+      location.search === formatSearchQuery(populatedSearch)
+    ) {
+      saveLastSearch(populatedSearch);
+      setSearch(populatedSearch);
+    } else {
+      navigate(`/${populatedSearch.resourceType}${formatSearchQuery(populatedSearch)}`);
+    }
+  }, [medplum, location, navigate]);
 
   if (!search?.resourceType || !search.fields || search.fields.length === 0) {
     return <Loading />;
@@ -28,6 +42,27 @@ export function SearchPage(): JSX.Element {
       search={search}
       userConfig={medplum.getUserConfiguration()}
       onClick={(e) => navigate(`/${e.resource.resourceType}/${e.resource.id}`)}
+      onChange={(e) => {
+        navigate(`/${search.resourceType}${formatSearchQuery(e.definition)}`);
+      }}
+      onNew={search.resourceType === 'Bot' ? undefined : () => navigate(`/${search.resourceType}/new`)}
+      onDelete={(ids: string[]) => {
+        if (window.confirm('Are you sure you want to delete this resource?')) {
+          medplum.invalidateSearches(search.resourceType as ResourceType);
+          medplum
+            .executeBatch({
+              resourceType: 'Bundle',
+              type: 'batch',
+              entry: ids.map((id) => ({
+                request: {
+                  method: 'DELETE',
+                  urls: `${search.resourceType}/${id}`,
+                },
+              })),
+            })
+            .then(() => setSearch({ ...search }));
+        }
+      }}
     />
   );
 }
