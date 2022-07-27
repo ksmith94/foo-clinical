@@ -5,11 +5,10 @@
 import { Patient } from '@medplum/fhirtypes';
 import { MockClient } from '@medplum/mock';
 import { MedplumProvider } from '@medplum/react';
-// import { test, expect } from '@jest/globals';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SearchPage } from './SearchPage';
+import { getDefaultFields, SearchPage } from './SearchPage';
 
 let medplum: MockClient;
 
@@ -127,5 +126,73 @@ describe('SearchPage', () => {
     expect(check).toBeUndefined();
 
     await waitFor(() => screen.queryByText(patient.id as string) === null);
+  });
+
+  test('Export button', async () => {
+    window.URL.createObjectURL = jest.fn(() => 'blob:http://localhost/blob');
+    window.open = jest.fn();
+
+    await setup();
+    await waitFor(() => screen.getByText('Export...'));
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Export...'));
+    });
+  });
+
+  test('Default search fields', () => {
+    expect(getDefaultFields('AcessPolicy')).toEqual(['id', '_lastUpdated']);
+    expect(getDefaultFields('ClientApplication')).toEqual(['id', '_lastUpdated', 'name']);
+    expect(getDefaultFields('Condition')).toEqual(['id', '_lastUpdated', 'subject', 'code', 'clinicalStatus']);
+    expect(getDefaultFields('Device')).toEqual(['id', '_lastUpdated', 'manufacturer', 'deviceName', 'patient']);
+    expect(getDefaultFields('DeviceDefinition')).toEqual(['id', '_lastUpdated', 'manufacturer[x]', 'deviceName']);
+    expect(getDefaultFields('DeviceRequest')).toEqual(['id', '_lastUpdated', 'code[x]', 'subject']);
+    expect(getDefaultFields('DiagnosticReport')).toEqual(['id', '_lastUpdated', 'subject', 'code', 'status']);
+    expect(getDefaultFields('Encounter')).toEqual(['id', '_lastUpdated', 'subject']);
+    expect(getDefaultFields('Observation')).toEqual(['id', '_lastUpdated', 'subject', 'code', 'status']);
+    expect(getDefaultFields('Organization')).toEqual(['id', '_lastUpdated', 'name']);
+    expect(getDefaultFields('Patient')).toEqual(['id', '_lastUpdated', 'name', 'birthDate', 'gender']);
+    expect(getDefaultFields('Practitioner')).toEqual(['id', '_lastUpdated', 'name']);
+    expect(getDefaultFields('Project')).toEqual(['id', '_lastUpdated', 'name']);
+    expect(getDefaultFields('Questionnaire')).toEqual(['id', '_lastUpdated', 'name']);
+    expect(getDefaultFields('ServiceRequest')).toEqual([
+      'id',
+      '_lastUpdated',
+      'subject',
+      'code',
+      'status',
+      'orderDetail',
+    ]);
+    expect(getDefaultFields('Subscription')).toEqual(['id', '_lastUpdated', 'criteria']);
+    expect(getDefaultFields('User')).toEqual(['id', '_lastUpdated', 'email']);
+    expect(getDefaultFields('ValueSet')).toEqual(['id', '_lastUpdated', 'name', 'title', 'status']);
+  });
+
+  test('Left click on row', async () => {
+    window.open = jest.fn();
+
+    await setup('/Patient');
+    await waitFor(() => screen.getByTestId('search-control'));
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Homer Simpson'));
+    });
+
+    expect(screen.queryByText('Resource Page')).toBeDefined();
+    expect(window.open).not.toHaveBeenCalled();
+  });
+
+  test('Middle click on row', async () => {
+    window.open = jest.fn();
+    await setup('/Patient');
+    await waitFor(() => screen.getByTestId('search-control'));
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Homer Simpson'), { button: 1 });
+    });
+
+    expect(window.open).toHaveBeenCalled();
+
+    expect(screen.queryByTestId('search-control')).toBeDefined();
   });
 });

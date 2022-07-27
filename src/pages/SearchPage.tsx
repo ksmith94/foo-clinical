@@ -42,6 +42,7 @@ export function SearchPage(): JSX.Element {
       search={search}
       userConfig={medplum.getUserConfiguration()}
       onClick={(e) => navigate(`/${e.resource.resourceType}/${e.resource.id}`)}
+      onAuxClick={(e) => window.open(`/${e.resource.resourceType}/${e.resource.id}`, '_blank')}
       onChange={(e) => {
         navigate(`/${search.resourceType}${formatSearchQuery(e.definition)}`);
       }}
@@ -56,12 +57,18 @@ export function SearchPage(): JSX.Element {
               entry: ids.map((id) => ({
                 request: {
                   method: 'DELETE',
-                  urls: `${search.resourceType}/${id}`,
+                  url: `${search.resourceType}/${id}`,
                 },
               })),
             })
             .then(() => setSearch({ ...search }));
         }
+      }}
+      onExport={() => {
+        const url = medplum.fhirUrl(search.resourceType, '$csv') + formatSearchQuery(search);
+        medplum.download(url).then((blob) => {
+          window.open(window.URL.createObjectURL(blob), '_blank');
+        });
       }}
     />
   );
