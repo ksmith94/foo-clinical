@@ -93,7 +93,7 @@ function addDefaultSearchValues(search: SearchRequest, config: UserConfiguration
   };
 }
 
-function getDefaultResourceType(config: UserConfiguration | undefined): string {
+export function getDefaultResourceType(config: UserConfiguration | undefined): string {
   return (
     localStorage.getItem('defaultResourceType') ||
     config?.option?.find((o) => o.id === 'defaultResourceType')?.valueString ||
@@ -161,7 +161,7 @@ function getDefaultFilters(resourceType: string): Filter[] | undefined {
   return getLastSearch(resourceType)?.filters;
 }
 
-function getDefaultSortRules(resourceType: string): SortRule[] {
+export function getDefaultSortRules(resourceType: string): SortRule[] {
   const lastSearch = getLastSearch(resourceType);
   if (lastSearch?.sortRules) {
     return lastSearch.sortRules;

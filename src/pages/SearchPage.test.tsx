@@ -8,7 +8,7 @@ import { MedplumProvider } from '@medplum/react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { getDefaultFields, SearchPage } from './SearchPage';
+import { getDefaultFields, SearchPage, getDefaultSortRules } from './SearchPage';
 
 let medplum: MockClient;
 
@@ -166,6 +166,29 @@ describe('SearchPage', () => {
     expect(getDefaultFields('Subscription')).toEqual(['id', '_lastUpdated', 'criteria']);
     expect(getDefaultFields('User')).toEqual(['id', '_lastUpdated', 'email']);
     expect(getDefaultFields('ValueSet')).toEqual(['id', '_lastUpdated', 'name', 'title', 'status']);
+  });
+
+  test('Get last default search fields', () => {
+    global.localStorage.setItem(
+      'Patient-defaultSearch',
+      JSON.stringify({
+        fields: ['id', '_lastUpdated', 'name', 'birthDate', 'gender'],
+      })
+    );
+    expect(getDefaultFields('Patient')).toEqual(['id', '_lastUpdated', 'name', 'birthDate', 'gender']);
+  });
+
+  test('Get last default sort rules', () => {
+    global.localStorage.setItem(
+      'Patient-defaultSearch',
+      JSON.stringify({
+        sortRules: {
+          code: '_lastUpdated',
+          descending: true,
+        },
+      })
+    );
+    expect(getDefaultSortRules('Patient')).toStrictEqual({ code: '_lastUpdated', descending: true });
   });
 
   test('Left click on row', async () => {
