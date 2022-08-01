@@ -13,7 +13,7 @@ export function HomePage(): JSX.Element {
   }
 
   return (
-    <Document>
+    <Document data-testid="home">
       <h1>Welcome {formatGivenName(profile.name?.[0] as HumanName)}</h1>
       <h3>Patients</h3>
       {patients.map((e) => (
