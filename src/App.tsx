@@ -1,10 +1,5 @@
 import { getReferenceString } from '@medplum/core';
-<<<<<<< HEAD
 import { ErrorBoundary, Header, useMedplum } from '@medplum/react';
-=======
-import { UserConfiguration } from '@medplum/fhirtypes';
-import { ErrorBoundary, Header, useMedplum, Loading } from '@medplum/react';
->>>>>>> main
 import React from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
