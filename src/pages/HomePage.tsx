@@ -2,6 +2,7 @@ import { formatGivenName } from '@medplum/core';
 import { HumanName, Patient, Practitioner } from '@medplum/fhirtypes';
 import { Document, Loading, ResourceBadge, useMedplum, useMedplumProfile } from '@medplum/react';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export function HomePage(): JSX.Element {
   const medplum = useMedplum();
@@ -13,9 +14,11 @@ export function HomePage(): JSX.Element {
   }
 
   return (
-    <Document data-testid="home">
+    <Document data-testid="home-page">
       <h1>Welcome {formatGivenName(profile.name?.[0] as HumanName)}</h1>
-      <h3>Patients</h3>
+      <h2>
+        <Link to="/Patient">Patients</Link>
+      </h2>
       {patients.map((e) => (
         <div key={e.id}>
           <ResourceBadge link={true} value={e} />

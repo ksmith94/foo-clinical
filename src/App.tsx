@@ -1,5 +1,4 @@
 import { getReferenceString } from '@medplum/core';
-import { UserConfiguration } from '@medplum/fhirtypes';
 import { ErrorBoundary, Header, useMedplum, Loading } from '@medplum/react';
 import React from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
@@ -8,6 +7,7 @@ import { LandingPage } from './pages/LandingPage';
 import { PatientPage } from './pages/PatientPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { ResourceApplicationPage } from './pages/ResourceApplicationPage';
+import { SearchPage } from './pages/SearchPage';
 import { SignInPage } from './pages/SignInPage';
 
 export function App(): JSX.Element | null {
@@ -20,29 +20,19 @@ export function App(): JSX.Element | null {
 
   const profile = medplum.getProfile();
 
-  const config: UserConfiguration = {
-    resourceType: 'UserConfiguration',
-    menu: [
-      {
-        title: 'My Menu',
-        link: [{ name: 'Patients', target: '/' }],
-      },
-    ],
-  };
-
   return (
     <>
       {profile && (
         <Header
-          bgColor="#0d9488"
+          bgColor="#0D9488"
           title="MyCompany"
-          onLogo={() => navigate(`/${getReferenceString(profile)}`)}
-          onProfile={() => navigate(`/profile`)}
+          onLogo={() => navigate('/')}
+          onProfile={() => navigate(`/${getReferenceString(profile)}`)}
           onSignOut={() => {
             medplum.signOut();
             navigate('/signin');
           }}
-          config={config}
+          config={medplum.getUserConfiguration()}
         />
       )}
       <ErrorBoundary>
@@ -52,6 +42,7 @@ export function App(): JSX.Element | null {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/Patient/:id" element={<PatientPage />} />
           <Route path="/:resourceType/:id" element={<ResourceApplicationPage />} />
+          <Route path="/:resourceType" element={<SearchPage />} />
         </Routes>
       </ErrorBoundary>
     </>
