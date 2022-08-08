@@ -1,8 +1,25 @@
-import { getDisplayString } from '@medplum/core';
-import { ResourceType, Resource, OperationOutcome, Bundle, Questionnaire, ServiceRequest } from '@medplum/fhirtypes';
-import { Document, Loading, MedplumLink, ResourceTable, Tab, TabList, useMedplum } from '@medplum/react';
+import { Resource, OperationOutcome, Bundle, Questionnaire } from '@medplum/fhirtypes';
+import {
+  Document,
+  ErrorBoundary,
+  Loading,
+  MedplumLink,
+  PatientTimeline,
+  ResourceBlame,
+  ResourceForm,
+  ResourceHistoryTable,
+  ResourceTable,
+  Tab,
+  TabList,
+  TabPanel,
+  TabSwitch,
+  useMedplum,
+} from '@medplum/react';
 import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import './MirrorPage.css';
+import { PatientHeader } from './PatientHeader';
+import { getPatient } from './utils';
 
 /**
  * This is an example of a generic "Resource Display" page.
@@ -46,7 +63,6 @@ export function MirrorPage(): JSX.Element {
     id: string;
     tab: string;
   };
-  const resource = medplum.readResource(resourceType as ResourceType, id as string).read();
 
   const loadResource = useCallback(() => {
     setError(undefined);
@@ -100,20 +116,8 @@ export function MirrorPage(): JSX.Element {
     navigate(url);
   }
 
-  function onsubmit(newResource: Resource): void {
+  function onSubmit(newResource: Resource): void {
     medplum.updateResource(newResource).then(loadResource).catch(setError);
-  }
-
-  function onStatusChange(status: string): void {
-    const serviceRequest = value as ServiceRequest;
-    const orderDetail = serviceRequest.orderDetail || [];
-    if (orderDetail.length === 0) {
-      orderDetail.push({});
-    }
-    if (orderDetail[0].text !== status) {
-      orderDetail[0].text = status;
-      onsubmit({ ...serviceRequest, orderDetail });
-    }
   }
 
   useEffect(() => {
@@ -136,20 +140,71 @@ export function MirrorPage(): JSX.Element {
   const tabs = getTabs(resourceType);
   const defaultTab = tabs[0].toLowerCase();
   const currentTab = tab || defaultTab;
-
+  const patient = getPatient(value);
   return (
     <>
+      {patient && <PatientHeader patient={patient} />}
       <TabList value={currentTab} onChange={onTabChange}>
         {tabs.map((t) => (
           <Tab key={t} name={t.toLowerCase()} label={t} />
         ))}
       </TabList>
-      <Document>
-        <h2>{getDisplayString(resource)}</h2>
-        <div>
-          <ResourceTable key={`${resourceType}/${id}`} value={resource} ignoreMissingValues={true} />
-        </div>
-      </Document>
+      {currentTab !== 'editor' && (
+        <Document>
+          {error && <pre data-testid="error">{JSON.stringify(error, undefined, 2)}</pre>}
+          <TabSwitch value={currentTab}>
+            <TabPanel name={currentTab}>
+              <ErrorBoundary>
+                <ResourceTab
+                  name={currentTab.toLowerCase()}
+                  resource={value}
+                  resourceHistory={historyBundle}
+                  questionnaires={questionnaires as Bundle<Questionnaire>}
+                  onSubmit={onSubmit}
+                  outcome={error}
+                />
+              </ErrorBoundary>
+            </TabPanel>
+          </TabSwitch>
+        </Document>
+      )}
     </>
   );
+}
+
+interface ResourceTabProps {
+  name: string;
+  resource: Resource;
+  resourceHistory: Bundle;
+  questionnaires: Bundle<Questionnaire>;
+  onSubmit: (resource: Resource) => void;
+  outcome?: OperationOutcome;
+}
+
+function ResourceTab(props: ResourceTabProps): JSX.Element | null {
+  const navigate = useNavigate();
+  // const medplum = useMedplum();
+  const { resourceType, id } = props.resource;
+  switch (props.name) {
+    case 'details':
+      return <ResourceTable value={props.resource} />;
+    case 'history':
+      return <ResourceHistoryTable history={props.resourceHistory} />;
+    case 'blame':
+      return <ResourceBlame history={props.resourceHistory} />;
+    case 'timeline':
+      if (props.resource.resourceType === 'Patient') {
+        return <PatientTimeline patient={props.resource} />;
+      }
+      return null;
+    case 'edit':
+      return (
+        <ResourceForm
+          defaultValue={props.resource}
+          onSubmit={props.onSubmit}
+          onDelete={() => navigate(`/${resourceType}/${id}/delete`)}
+        />
+      );
+  }
+  return null;
 }

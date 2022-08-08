@@ -31,7 +31,7 @@ describe('MirrorPage', () => {
   }
 
   test('Resource renders', async () => {
-    await setup('/Practitioner/123');
+    await setup('/Patient/123');
     await waitFor(() => screen.getAllByText('Alice Smith'));
 
     expect(screen.queryAllByText('Alice Smith')).toBeDefined();
@@ -67,22 +67,68 @@ describe('MirrorPage', () => {
     expect(getTabs('RequestGroup')).toEqual(['Timeline', 'Details', 'Edit', 'History', 'Blame', 'JSON', 'Checklist']);
   });
 
-  test('Tab changes', async () => {
-    window.open = jest.fn();
-
-    await setup('/Patient/123');
-    await waitFor(() => screen.getByText('Timeline'));
-
-    await act(async () => {
-      fireEvent.click(screen.getByText('Details'));
-    });
-    expect(screen.getByText('Details')).toHaveClass('selected');
-  });
-
   test('Tabs exist', async () => {
     await setup('/Practitioner/123');
     await waitFor(() => screen.getByText('Timeline'));
 
     expect(screen.getByText('Timeline')).toBeDefined();
+  });
+
+  test('Patient header', async () => {
+    await setup('/Patient/123');
+    await waitFor(() => screen.getByTestId('patient-header'));
+
+    expect(screen.getByTestId('patient-header')).toBeInTheDocument();
+  });
+
+  test('Not found', async () => {
+    await setup('Patient/not-found');
+    await waitFor(() => screen.getByText('Resource Not Found'));
+    expect(screen.getByText('Resource not found')).toBeInTheDocument();
+  });
+
+  test('Details render', async () => {
+    await setup('/Patient/123/details');
+    await waitFor(() => screen.queryAllByText('Name'));
+    expect(screen.queryAllByText('Name')[0]).toBeInTheDocument();
+  });
+
+  test('Timeline renders', async () => {
+    await setup('/Patient/123/timeline');
+    await waitFor(() => screen.getAllByText('Timeline'));
+
+    expect(screen.getByText('Timeline')).toBeInTheDocument();
+  });
+
+  test('History renders', async () => {
+    await setup('/Patient/123/history');
+    await waitFor(() => screen.getByText('History'));
+
+    expect(screen.getByText('History')).toBeInTheDocument();
+  });
+
+  test('Blame renders', async () => {
+    await setup('/Patient/123/blame');
+    await waitFor(() => screen.getByText('Blame'));
+
+    expect(screen.getByText('Blame')).toBeInTheDocument();
+  });
+
+  test('Edit renders', async () => {
+    await setup('/Patient/123/edit');
+    await waitFor(() => screen.getByText('Edit'));
+
+    expect(screen.getByText('Edit')).toBeInTheDocument();
+  });
+
+  test('Click on tab', async () => {
+    await setup('/Patient/123/details');
+    await waitFor(() => screen.getByText('Name'));
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('History'));
+    });
+
+    expect(screen.getByText('History')).toHaveClass('Selected');
   });
 });
