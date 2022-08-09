@@ -82,9 +82,9 @@ describe('MirrorPage', () => {
   });
 
   test('Not found', async () => {
-    await setup('Patient/not-found');
+    await setup('/Patient/not-found');
     await waitFor(() => screen.getByText('Resource Not Found'));
-    expect(screen.getByText('Resource not found')).toBeInTheDocument();
+    expect(screen.getByText('Resource Not Found')).toBeInTheDocument();
   });
 
   test('Details render', async () => {
