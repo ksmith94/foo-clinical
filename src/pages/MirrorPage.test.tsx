@@ -93,8 +93,29 @@ describe('MirrorPage', () => {
     expect(screen.queryAllByText('Name')[0]).toBeInTheDocument();
   });
 
-  test('Timeline renders', async () => {
+  test('Patient timeline renders', async () => {
     await setup('/Patient/123/timeline');
+    await waitFor(() => screen.getAllByText('Timeline'));
+
+    expect(screen.getByText('Timeline')).toBeInTheDocument();
+  });
+
+  test('Encounter timeline renders', async () => {
+    await setup('/Encounter/123/timeline');
+    await waitFor(() => screen.getAllByText('Timeline'));
+
+    expect(screen.getByText('Timeline')).toBeInTheDocument();
+  });
+
+  test('Service request timeline renders', async () => {
+    await setup('/ServiceRequest/123/timeline');
+    await waitFor(() => screen.getAllByText('Timeline'));
+
+    expect(screen.getByText('Timeline')).toBeInTheDocument();
+  });
+
+  test('Default timeline renders', async () => {
+    await setup('/Practitioner/123/timeline');
     await waitFor(() => screen.getAllByText('Timeline'));
 
     expect(screen.getByText('Timeline')).toBeInTheDocument();
@@ -121,14 +142,21 @@ describe('MirrorPage', () => {
     expect(screen.getByText('Edit')).toBeInTheDocument();
   });
 
+  test('JSON renders', async () => {
+    await setup('/Patient/123/json');
+    await waitFor(() => screen.getByTestId('resource-json'));
+
+    expect(screen.getByTestId('resource-json')).toBeInTheDocument();
+  });
+
   test('Click on tab', async () => {
     await setup('/Patient/123/details');
-    await waitFor(() => screen.getByText('Name'));
+    await waitFor(() => screen.getAllByText('Name'));
 
     await act(async () => {
       fireEvent.click(screen.getByText('History'));
     });
 
-    expect(screen.getByText('History')).toHaveClass('Selected');
+    expect(screen.getByText('History')).toHaveClass('selected');
   });
 });

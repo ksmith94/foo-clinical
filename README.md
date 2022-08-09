@@ -35,6 +35,55 @@ npm t
 ```
 This will run all tests in your repo. Tests for FooClinical are run using Jest and Testing Library for React. 
 
+** Note** 
+If you want to use `@testing-library/jest-dom` matchers (for example, `toHaveClass` or `toBeInTheDocument`), there is an additional step that needs to be taken. This is already installed, but needs additional configuration. 
+
+If you do not already have one, create a `jest.config.json` file and add the below to it.
+```javascript
+{
+    "testEnvironment": "jsdom",
+    "transform": {
+        "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
+    },
+    "moduleFileExtensions": [
+        "ts",
+        "tsx",
+        "js",
+        "jsx",
+        "json",
+        "node"
+    ],
+    "moduleNameMapper": {
+        "\\.css$": "identity-obj-proxy"
+    },
+    "testMatch": [
+        "**/src/**/*.test.ts",
+        "**/src/**/*.test.tsx"
+    ],
+    "setupFilesAfterEnv": [
+        "./src/test.setup.ts"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+        "json",
+        "text"
+    ],
+    "collectCoverageFrom": [
+        "**/src/**/*"
+    ]
+}
+```
+Additionally, you will need to add a `test.setup.ts` file if you do not already have one. Add the below to the file: 
+```javascript
+import '@testing-library/jest-dom';
+(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
+```
+Once this is done, your configuration is ready, but `identity-obj-proxy` will still need to be installed so that jest knows to ignore any css files you may have. To install run the following in your console:
+```javascript
+npm install --save-dev identity-obj-proxy
+```
+Your testing environment should now be set up!
+
 ## Running App to Vercel
 We will be using Vercel to set up a build view of the application. Go to `vercel.com`, where you will need to create an account if you do not already have one. 
 

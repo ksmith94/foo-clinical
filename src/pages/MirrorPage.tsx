@@ -1,7 +1,12 @@
+import { stringify } from '@medplum/core';
 import { Resource, OperationOutcome, Bundle, Questionnaire } from '@medplum/fhirtypes';
 import {
+  Button,
+  DefaultResourceTimeline,
   Document,
+  EncounterTimeline,
   ErrorBoundary,
+  Form,
   Loading,
   MedplumLink,
   PatientTimeline,
@@ -9,10 +14,12 @@ import {
   ResourceForm,
   ResourceHistoryTable,
   ResourceTable,
+  ServiceRequestTimeline,
   Tab,
   TabList,
   TabPanel,
   TabSwitch,
+  TextArea,
   useMedplum,
 } from '@medplum/react';
 import React, { useState, useCallback, useEffect } from 'react';
@@ -196,7 +203,13 @@ function ResourceTab(props: ResourceTabProps): JSX.Element | null {
       if (props.resource.resourceType === 'Patient') {
         return <PatientTimeline patient={props.resource} />;
       }
-      return null;
+      if (props.resource.resourceType === 'Encounter') {
+        return <EncounterTimeline encounter={props.resource} />;
+      }
+      if (props.resource.resourceType === 'ServiceRequest') {
+        return <ServiceRequestTimeline serviceRequest={props.resource} />;
+      }
+      return <DefaultResourceTimeline resource={props.resource} />;
     case 'edit':
       return (
         <ResourceForm
@@ -204,6 +217,23 @@ function ResourceTab(props: ResourceTabProps): JSX.Element | null {
           onSubmit={props.onSubmit}
           onDelete={() => navigate(`/${resourceType}/${id}/delete`)}
         />
+      );
+    case 'json':
+      return (
+        <Form
+          onSubmit={(formData: Record<string, string>) => {
+            props.onSubmit(JSON.parse(formData.resource));
+          }}
+        >
+          <TextArea
+            testid="resource-json"
+            name="resource"
+            monospace={true}
+            style={{ height: 400 }}
+            defaultValue={stringify(props.resource, true)}
+          />
+          <Button type="submit">OK</Button>
+        </Form>
       );
   }
   return null;
