@@ -23,12 +23,6 @@
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
-        [
-            "lcov",
-            {
-                "projectRoot": "./src/test.setup.ts"
-            }
-        ],
         "json",
         "text"
     ],
