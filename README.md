@@ -65,6 +65,7 @@ If you do not already have one, create a `jest.config.json` file and add the bel
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
+        "lcov",
         "json",
         "text"
     ],

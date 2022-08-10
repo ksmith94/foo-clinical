@@ -26,12 +26,9 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './MirrorPage.css';
 import { PatientHeader } from './PatientHeader';
+import { ResourceHeader } from './ResourceHeader';
 import { getPatient } from './utils';
 
-/**
- * This is an example of a generic "Resource Display" page.
- * It uses the Medplum `<ResourceTable>` component to display a resource.
- */
 export function getTabs(resourceType: string): string[] {
   const result = ['Timeline'];
   result.push('Details', 'Edit', 'History', 'Blame', 'JSON');
@@ -151,6 +148,7 @@ export function MirrorPage(): JSX.Element {
   return (
     <>
       {patient && <PatientHeader patient={patient} />}
+      {resourceType !== 'Patient' && <ResourceHeader resource={value} />}
       <TabList value={currentTab} onChange={onTabChange}>
         {tabs.map((t) => (
           <Tab key={t} name={t.toLowerCase()} label={t} />
@@ -190,7 +188,7 @@ interface ResourceTabProps {
 
 function ResourceTab(props: ResourceTabProps): JSX.Element | null {
   const navigate = useNavigate();
-  // const medplum = useMedplum();
+  const medplum = useMedplum();
   const { resourceType, id } = props.resource;
   switch (props.name) {
     case 'details':
@@ -217,6 +215,20 @@ function ResourceTab(props: ResourceTabProps): JSX.Element | null {
           onSubmit={props.onSubmit}
           onDelete={() => navigate(`/${resourceType}/${id}/delete`)}
         />
+      );
+    case 'delete':
+      return (
+        <>
+          <p>Are you sure you want to delete this {resourceType}?</p>
+          <Button
+            danger={true}
+            onClick={() => {
+              medplum.deleteResource(resourceType, id as string).then(() => navigate(`/${resourceType}`));
+            }}
+          >
+            Delete
+          </Button>
+        </>
       );
     case 'json':
       return (

@@ -9,6 +9,7 @@ import { MedplumProvider } from '@medplum/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { MirrorPage, getTabs } from './MirrorPage';
 import { SearchPage } from './SearchPage';
+import { Patient } from '@medplum/fhirtypes';
 
 let medplum: MockClient;
 
@@ -142,11 +143,64 @@ describe('MirrorPage', () => {
     expect(screen.getByText('Edit')).toBeInTheDocument();
   });
 
+  test('Delete button prompts user', async () => {
+    await setup('/Patient/123/edit');
+    await waitFor(() => screen.getByText('Delete'));
+    expect(screen.getByText('Delete')).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Delete'));
+    });
+
+    await waitFor(() => screen.getByText('Are you sure you want to delete this Patient?'));
+    expect(screen.getByText('Are you sure you want to delete this Patient?')).toBeInTheDocument();
+  });
+
+  test('Delete button, OK', async () => {
+    const patient = await medplum.createResource<Patient>({
+      resourceType: 'Patient',
+    });
+
+    await setup(`/Patient/${patient.id}/delete`);
+    await waitFor(() => screen.getByText('Delete'));
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Delete'));
+    });
+
+    const check = await medplum.readResource('Patient', patient.id as string);
+    expect(check).toBeUndefined();
+  });
+
   test('JSON renders', async () => {
     await setup('/Patient/123/json');
     await waitFor(() => screen.getByTestId('resource-json'));
 
     expect(screen.getByTestId('resource-json')).toBeInTheDocument();
+  });
+
+  test('JSON submit', async () => {
+    await setup('/Patient/123/json');
+    await waitFor(() => screen.getByTestId('resource-json'));
+
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('resource-json'), {
+        target: { value: '{"resourceType":"Patient", "id":"123"}' },
+      });
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('OK'));
+    });
+
+    expect(screen.getByTestId('resource-json')).toBeInTheDocument();
+  });
+
+  test('Renders null', async () => {
+    await setup('/Patient/123/no-tab');
+    await waitFor(() => screen.getByRole('tabpanel'));
+
+    expect(screen.getByRole('tabpanel')).toBeEmptyDOMElement();
   });
 
   test('Click on tab', async () => {
