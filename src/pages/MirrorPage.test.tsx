@@ -39,33 +39,13 @@ describe('MirrorPage', () => {
   });
 
   test('Get tabs', async () => {
-    expect(getTabs('Patient')).toEqual(['Timeline', 'Details', 'Edit', 'History', 'Blame', 'JSON']);
-    expect(getTabs('Practitioner')).toEqual(['Timeline', 'Details', 'Edit', 'History', 'Blame', 'JSON']);
-    expect(getTabs('Organization')).toEqual(['Timeline', 'Details', 'Edit', 'History', 'Blame', 'JSON']);
-    expect(getTabs('ServiceRequest')).toEqual(['Timeline', 'Details', 'Edit', 'History', 'Blame', 'JSON']);
-    expect(getTabs('DiagnosticReport')).toEqual(['Timeline', 'Details', 'Edit', 'History', 'Blame', 'JSON', 'Report']);
-    expect(getTabs('Questionnaire')).toEqual([
-      'Timeline',
-      'Details',
-      'Edit',
-      'History',
-      'Blame',
-      'JSON',
-      'Preview',
-      'Builder',
-    ]);
-    expect(getTabs('PlanDefinition')).toEqual([
-      'Timeline',
-      'Details',
-      'Edit',
-      'History',
-      'Blame',
-      'JSON',
-      'Apply',
-      'Builder',
-    ]);
-    expect(getTabs('Bot')).toEqual(['Timeline', 'Details', 'Edit', 'History', 'Blame', 'JSON', 'Editor']);
-    expect(getTabs('RequestGroup')).toEqual(['Timeline', 'Details', 'Edit', 'History', 'Blame', 'JSON', 'Checklist']);
+    const tabs = ['Timeline', 'Details', 'Edit', 'History', 'Blame', 'JSON'];
+    expect(getTabs('Patient')).toEqual(tabs);
+    expect(getTabs('DiagnosticReport')).toEqual([...tabs, 'Report']);
+    expect(getTabs('Questionnaire')).toEqual([...tabs, 'Preview', 'Builder']);
+    expect(getTabs('PlanDefinition')).toEqual([...tabs, 'Apply', 'Builder']);
+    expect(getTabs('Bot')).toEqual([...tabs, 'Editor']);
+    expect(getTabs('RequestGroup')).toEqual([...tabs, 'Checklist']);
   });
 
   test('Tabs exist', async () => {
