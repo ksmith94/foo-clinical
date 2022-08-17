@@ -1,8 +1,8 @@
-h1 {
+/* h1 {
   display: flex;
   justify-content: center;
   text-align: center;
-}
+} */
 
 .additional-links {
   display: flex;
@@ -10,28 +10,66 @@ h1 {
   padding-top: 8px;
 }
 
-.medplum-document h2 {
+.medplum-document .resource-header {
   font-weight: 500;
+  margin-left: -25px;
+  padding: 4px 10px 4px 25px;
+  background: #0D9488;
+  color: white;
+  width: fit-content;
+  border-radius: 0 4px 4px 0;
 }
 
 .medplum-document p {
   font-weight: 200;
 }
 
-.homepage .medplum-document {
-  width: fit-content;
-  max-width: 300px;
+.homepage {
+  display: flex;
+  justify-content: space-between;
 }
 
-.homepage article {
-  height: fit-content;
+.homepage-resources .medplum-document {
+  width: 50%;
+  height: 320px;
+  padding: 0;
+  margin: 0;
 }
 
 .resources {
   overflow: scroll;
 }
 
-.homepage {
+.homepage-resources {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.medplum-document article {
+  height: 100%;
+  border-radius: 0;
+}
+
+.medplum-calendar-container {
+  width: fit-content;
+  margin: 0 10px;
+}
+
+.medplum-calendar-info-pane {
+  width: 35%;
+}
+
+.medplum-calendar-selection-pane {
+  width: 65%;
+}
+
+.profile-link {
   display: flex;
   justify-content: center;
+  color: black;
+  width: fit-content;
+  margin: auto;
 }

@@ -48,4 +48,18 @@ describe('HomePage', () => {
 
     expect(screen.getByText('Organizations')).toBeInTheDocument();
   });
+
+  test('Diagnostic Reports render', async () => {
+    await setup('/');
+    await waitFor(() => screen.getByText('Diagnostic Reports'));
+
+    expect(screen.getByText('Diagnostic Reports')).toBeInTheDocument();
+  });
+
+  test('Calendar renders', async () => {
+    await setup('/');
+    await waitFor(() => screen.getByText('WED'));
+
+    expect(screen.getByText('WED')).toBeInTheDocument();
+  });
 });
