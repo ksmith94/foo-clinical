@@ -31,7 +31,7 @@ describe('MirrorPage', () => {
     });
   }
 
-  test('Resource renders', async () => {
+  test('Renders a patient', async () => {
     await setup('/Patient/123');
     await waitFor(() => screen.getAllByText('Alice Smith'));
 
@@ -124,6 +124,7 @@ describe('MirrorPage', () => {
   });
 
   test('Delete button prompts user', async () => {
+    const confirm = 'Are you sure you want to delete this Patient?';
     await setup('/Patient/123/edit');
     await waitFor(() => screen.getByText('Delete'));
     expect(screen.getByText('Delete')).toBeInTheDocument();
@@ -132,8 +133,8 @@ describe('MirrorPage', () => {
       fireEvent.click(screen.getByText('Delete'));
     });
 
-    await waitFor(() => screen.getByText('Are you sure you want to delete this Patient?'));
-    expect(screen.getByText('Are you sure you want to delete this Patient?')).toBeInTheDocument();
+    await waitFor(() => screen.getByText(confirm));
+    expect(screen.getByText(confirm)).toBeInTheDocument();
   });
 
   test('Delete button, OK', async () => {
