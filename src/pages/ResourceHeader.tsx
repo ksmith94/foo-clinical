@@ -30,7 +30,7 @@ export function ResourceHeader(props: ResourceHeaderProps): JSX.Element | null {
   }
 
   return (
-    <Scrollable className="medplum-surface" height={50}>
+    <Scrollable data-testid="resource-header" className="medplum-surface" height={50}>
       <div className="medplum-resource-header">
         {entries.map((entry) => (
           <dl key={entry.key}>
