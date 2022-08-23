@@ -1,0 +1,8 @@
+.schedule-page {
+  display: flex;
+}
+
+.slot-list {
+  width: 50%;
+  height: max-content;
+}

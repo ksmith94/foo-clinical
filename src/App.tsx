@@ -8,6 +8,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { MirrorPage } from './pages/MirrorPage';
 import { SearchPage } from './pages/SearchPage';
 import { SignInPage } from './pages/SignInPage';
+import { SchedulePage } from './pages/SchedulePage';
 
 export function App(): JSX.Element | null {
   const navigate = useNavigate();
