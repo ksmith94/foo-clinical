@@ -1,13 +1,17 @@
 import React, { useMemo, useState } from 'react';
 import './Calendar.css';
 
+interface CalendarProps {
+  onClick: (date: Date) => void;
+}
+
 interface CalendarCell {
   date: Date;
 }
 
 type OptionalCalendarCell = CalendarCell | undefined;
 
-export function Calendar(): JSX.Element | null {
+export function Calendar(props: CalendarProps): JSX.Element | null {
   const [month] = useState<Date>(getStartMonth);
 
   const grid = useMemo(() => buildGrid(month), [month]);
@@ -30,9 +34,7 @@ export function Calendar(): JSX.Element | null {
           {grid.map((week) => (
             <tr>
               {week.map((day) => (
-                <td>
-                  <p>{day?.date.getDate()}</p>
-                </td>
+                <td>{day && <button onClick={() => props.onClick(day.date)}>{day?.date.getDate()}</button>}</td>
               ))}
             </tr>
           ))}
