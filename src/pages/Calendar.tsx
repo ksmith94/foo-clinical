@@ -1,3 +1,4 @@
+import { Button } from '@medplum/react';
 import React, { useMemo, useState } from 'react';
 import './Calendar.css';
 
@@ -12,13 +13,31 @@ interface CalendarCell {
 type OptionalCalendarCell = CalendarCell | undefined;
 
 export function Calendar(props: CalendarProps): JSX.Element | null {
-  const [month] = useState<Date>(getStartMonth);
+  const [month, setMonth] = useState<Date>(getStartMonth);
+
+  function changeMonth(change: number): void {
+    setMonth((currMonth) => {
+      const prevMonth = new Date(currMonth.getTime());
+      prevMonth.setMonth(currMonth.getMonth() + change);
+      return prevMonth;
+    });
+  }
 
   const grid = useMemo(() => buildGrid(month), [month]);
   return (
     <div className="medplum-calendar">
+      <p className="month-button">
+        <Button label="Previous month" onClick={() => changeMonth(-1)}>
+          &lt;
+        </Button>
+      </p>
       <h1>{month.toLocaleString('default', { month: 'long' }) + ' ' + month.getFullYear()}</h1>
-      <table>
+      <p className="month-button">
+        <Button label="Next month" onClick={() => changeMonth(1)}>
+          &gt;
+        </Button>
+      </p>
+      <table className="calendar-grid">
         <thead>
           <tr>
             <th>SUN</th>
@@ -31,10 +50,12 @@ export function Calendar(props: CalendarProps): JSX.Element | null {
           </tr>
         </thead>
         <tbody>
-          {grid.map((week) => (
-            <tr>
-              {week.map((day) => (
-                <td>{day && <button onClick={() => props.onClick(day.date)}>{day?.date.getDate()}</button>}</td>
+          {grid.map((week, weekIndex) => (
+            <tr key={weekIndex}>
+              {week.map((day, dayIndex) => (
+                <td key={dayIndex}>
+                  {day && <button onClick={() => props.onClick(day.date)}>{day?.date.getDate()}</button>}
+                </td>
               ))}
             </tr>
           ))}

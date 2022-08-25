@@ -5,6 +5,7 @@ export const slotProps: SlotProps = {
   slots: [
     {
       resourceType: 'Slot',
+      id: 'slot#1',
       start: new Date(2022, 7, 24, 11, 0, 0).toISOString(),
       end: new Date(2022, 7, 24, 11, 30, 0).toISOString(),
       appointmentType: {
@@ -14,6 +15,7 @@ export const slotProps: SlotProps = {
     },
     {
       resourceType: 'Slot',
+      id: 'slot#2',
       start: new Date(2022, 7, 24, 13, 0, 0).toISOString(),
       end: new Date(2022, 7, 24, 14, 0, 0).toISOString(),
       appointmentType: {
@@ -23,6 +25,7 @@ export const slotProps: SlotProps = {
     },
     {
       resourceType: 'Slot',
+      id: 'slot#3',
       start: new Date(2022, 7, 25, 13, 0, 0).toISOString(),
       end: new Date(2022, 7, 25, 14, 0, 0).toISOString(),
       appointmentType: {
@@ -32,6 +35,7 @@ export const slotProps: SlotProps = {
     },
     {
       resourceType: 'Slot',
+      id: 'slot#4',
       start: new Date(2022, 7, 26, 10, 0, 0).toISOString(),
       end: new Date(2022, 7, 26, 16, 0, 0).toISOString(),
       appointmentType: {

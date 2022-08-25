@@ -9,7 +9,6 @@ export interface SlotProps {
 
 export function SlotDisplay(props: SlotProps): JSX.Element | null {
   const todaySlots = filterSlotsByDate(props.slots, props.date);
-  // const todayTimeSlots = getSlotTimeDisplay(todaySlots);
   if (todaySlots.length === 0) {
     return (
       <div className="slot-list">
@@ -25,9 +24,9 @@ export function SlotDisplay(props: SlotProps): JSX.Element | null {
       <Document>
         <h1>{props.date?.toDateString()}</h1>
         {todaySlots.map((slot) => (
-          <ul>
+          <ul key={slot.id}>
             <li>
-              {slot.start} – {slot.end}
+              {formatDate(slot.start)} – {formatDate(slot.end)}
               <ul>
                 <li>{slot.appointmentType?.text}</li>
                 <li>{slot.comment}</li>
@@ -52,23 +51,9 @@ export function filterSlotsByDate(slots: Slot[], date?: Date): Slot[] {
   return result;
 }
 
-// function getSlotTimeDisplay(slots: Slot[]): Slot[] {
-//   const result: Slot[] = [];
-//   slots.map((slot) => {
-//     if (slot.start && slot.end) {
-//       slot.start = new Date(slot.start).toLocaleTimeString();
-//       slot.end = new Date(slot.end).toLocaleTimeString();
-//       result.push(slot);
-//     }
-//   });
-//   return result;
-// }
-
-// function getSlotTimeDisplay(slot: Slot): Slot {
-//   const result = slot;
-//   if (slot.start && slot.end) {
-//     result.start = new Date(slot.start).toLocaleTimeString();
-//     result.end = new Date(slot.end).toLocaleTimeString();
-//   }
-//   return result;
-// }
+function formatDate(dateString: string | undefined): string | null {
+  if (dateString === undefined) {
+    return null;
+  }
+  return new Date(dateString).toLocaleTimeString();
+}

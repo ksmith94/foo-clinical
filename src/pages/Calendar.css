@@ -1,25 +1,29 @@
-.medplum-calendar {
-  width: 50%;
+/* .medplum-calendar {
+  width: 620px;
   padding: 10px;
   text-align: center;
-}
+} */
 
-th {
+.calendar-grid th {
   width: 100px;
   border: 1px solid grey;
   border-radius: 3px;
 }
 
-td {
+.calendar-grid td {
   width: 100px;
   height: 100px;
 }
 
-button {
+.calendar-grid button {
   height: 100%;
   width: 100%;
   display: flex;
   justify-content: center;
   margin: 0;
   padding: 0;
+}
+
+.month-button {
+  padding: 0 8px;
 }
