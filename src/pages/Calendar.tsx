@@ -31,7 +31,7 @@ export function Calendar(props: CalendarProps): JSX.Element | null {
           &lt;
         </Button>
       </p>
-      <h1>{month.toLocaleString('default', { month: 'long' }) + ' ' + month.getFullYear()}</h1>
+      <h1>{getMonthString(month)}</h1>
       <p className="month-button">
         <Button label="Next month" onClick={() => changeMonth(1)}>
           &gt;
@@ -54,7 +54,14 @@ export function Calendar(props: CalendarProps): JSX.Element | null {
             <tr key={weekIndex}>
               {week.map((day, dayIndex) => (
                 <td key={dayIndex}>
-                  {day && <button onClick={() => props.onClick(day.date)}>{day?.date.getDate()}</button>}
+                  {day && (
+                    <button
+                      onClick={() => props.onClick(day.date)}
+                      disabled={day.date.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)}
+                    >
+                      {day?.date.getDate()}
+                    </button>
+                  )}
                 </td>
               ))}
             </tr>
@@ -101,4 +108,8 @@ function buildGrid(startDate: Date): OptionalCalendarCell[][] {
     grid.push(row);
   }
   return grid;
+}
+
+export function getMonthString(date: Date): string {
+  return date.toLocaleString('default', { month: 'long' }) + ' ' + date.getFullYear();
 }
