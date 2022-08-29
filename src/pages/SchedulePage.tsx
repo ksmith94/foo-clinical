@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Calendar } from './Calendar';
 import { SlotDisplay } from './SlotDisplay';
 import './SchedulePage.css';
-// import { slotProps } from './SlotProps';
 import { useMedplum } from '@medplum/react';
 import { Slot } from '@medplum/fhirtypes';
 
@@ -11,7 +10,6 @@ export function SchedulePage(): JSX.Element | null {
   const [slots] = useState<Slot[]>(medplum.searchResources('Slot').read());
   const [date, setDate] = useState<Date>(new Date());
 
-  // const props = slotProps;
   return (
     <div className="schedule-page">
       <Calendar onClick={setDate} />
