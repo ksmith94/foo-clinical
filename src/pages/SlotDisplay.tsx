@@ -40,15 +40,7 @@ export function SlotDisplay(props: SlotProps): JSX.Element | null {
 }
 
 export function filterSlotsByDate(slots: Slot[], date?: Date): Slot[] {
-  const result: Slot[] = [];
-  slots.filter((slot) => {
-    if (slot.start) {
-      if (new Date(slot.start).getDate() === date?.getDate()) {
-        result.push(slot);
-      }
-    }
-  });
-  return result;
+  return slots.filter((slot) => slot.start && new Date(slot.start).getDate() === date?.getDate());
 }
 
 function formatDate(dateString: string | undefined): string | null {
