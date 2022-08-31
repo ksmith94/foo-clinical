@@ -9,31 +9,25 @@ export interface SlotProps {
 
 export function SlotDisplay(props: SlotProps): JSX.Element | null {
   const todaySlots = filterSlotsByDate(props.slots, props.date);
-  if (todaySlots.length === 0) {
-    return (
-      <div className="slot-list">
-        <Document>
-          <h1>{props.date?.toDateString()}</h1>
-          <p>No Appointments</p>
-        </Document>
-      </div>
-    );
-  }
   return (
     <div className="slot-list">
       <Document>
         <h1>{props.date?.toDateString()}</h1>
-        {todaySlots.map((slot) => (
-          <ul key={slot.id}>
-            <li>
-              {formatDate(slot.start)} – {formatDate(slot.end)}
-              <ul>
-                <li>{slot.appointmentType?.text}</li>
-                <li>{slot.comment}</li>
-              </ul>
-            </li>
-          </ul>
-        ))}
+        {todaySlots.length === 0 ? (
+          <p>No Appointments</p>
+        ) : (
+          todaySlots.map((slot) => (
+            <ul key={slot.id}>
+              <li>
+                {formatDate(slot.start)} – {formatDate(slot.end)}
+                <ul>
+                  <li>{slot.appointmentType?.text}</li>
+                  <li>{slot.comment}</li>
+                </ul>
+              </li>
+            </ul>
+          ))
+        )}
       </Document>
     </div>
   );
