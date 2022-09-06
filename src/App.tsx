@@ -24,7 +24,7 @@ export function App(): JSX.Element | null {
       {profile && (
         <Header
           bgColor="#0D9488"
-          title="MyCompany"
+          title="FooClinical"
           onLogo={() => navigate('/')}
           onProfile={() => navigate(`/${getReferenceString(profile)}`)}
           onSignOut={() => {
