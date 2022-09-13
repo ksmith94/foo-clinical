@@ -2,11 +2,11 @@
 FooClinical (fooclinical.com) is a sample EHR-like application using Medplum. It demonstrates the ease with which an EHR application can be built by using Medplum. It was built using Medplum App and Medplum UI React Componenets. Medplum is a developer platform for medical apps.
 
 ## Table of Contents
-- Getting Started
-- Running App Locally
-- Testing
-- Running App to Vercel (Optional)
-- Setting Up SonarSource (Optional)
+- [Getting Started](#getting-started)
+- [Running App Locally](#running-app-locally)
+- [Testing](#testing)
+- [Running App to Vercel](#running-app-to-vercel) (Optional)
+- [Setting Up SonarSource](#setting-up-sonarsource) (Optional)
 
 ## Getting Started
 First, you will need to fork and clone the repo from Github. Once this is complete, execute the below command in your terminal to install the necessary packages.
