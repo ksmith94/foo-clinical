@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { Patient } from '@medplum/fhirtypes';
+import { OperationOutcome, Patient } from '@medplum/fhirtypes';
 import { MockClient } from '@medplum/mock';
 import { MedplumProvider } from '@medplum/react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -10,10 +10,7 @@ import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { getDefaultFields, SearchPage, getDefaultSortRules } from './SearchPage';
 
-let medplum: MockClient;
-
-async function setup(url = '/Patient'): Promise<void> {
-  medplum = new MockClient();
+async function setup(url = '/Patient', medplum = new MockClient()): Promise<void> {
   await act(async () => {
     render(
       <MedplumProvider medplum={medplum}>
@@ -105,13 +102,14 @@ describe('SearchPage', () => {
   });
 
   test('Delete button, ok', async () => {
+    const medplum = new MockClient();
     const patient = await medplum.createResource<Patient>({
       resourceType: 'Patient',
     });
 
     window.confirm = jest.fn(() => true);
 
-    await setup();
+    await setup('/Patient', medplum);
     await waitFor(() => screen.getByText(patient.id as string));
     await waitFor(() => screen.getByText('Delete...'));
 
@@ -122,8 +120,12 @@ describe('SearchPage', () => {
       fireEvent.click(screen.getByText('Delete...'));
     });
 
-    const check = await medplum.readResource('Patient', patient.id as string);
-    expect(check).toBeUndefined();
+    try {
+      await medplum.readResource('Patient', patient.id as string);
+      fail('Should have thrown error');
+    } catch (err) {
+      expect((err as OperationOutcome).id).toEqual('not-found');
+    }
 
     await waitFor(() => screen.queryByText(patient.id as string) === null);
   });
