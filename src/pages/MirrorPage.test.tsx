@@ -9,13 +9,10 @@ import { MedplumProvider } from '@medplum/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { MirrorPage, getTabs } from './MirrorPage';
 import { SearchPage } from './SearchPage';
-import { Patient } from '@medplum/fhirtypes';
-
-let medplum: MockClient;
+import { OperationOutcome, Patient } from '@medplum/fhirtypes';
 
 describe('MirrorPage', () => {
-  async function setup(url: string): Promise<void> {
-    medplum = new MockClient();
+  async function setup(url: string, medplum = new MockClient()): Promise<void> {
     await act(async () => {
       render(
         <MedplumProvider medplum={medplum}>
@@ -138,19 +135,24 @@ describe('MirrorPage', () => {
   });
 
   test('Delete button, OK', async () => {
+    const medplum = new MockClient();
     const patient = await medplum.createResource<Patient>({
       resourceType: 'Patient',
     });
 
-    await setup(`/Patient/${patient.id}/delete`);
+    await setup(`/Patient/${patient.id}/delete`, medplum);
     await waitFor(() => screen.getByText('Delete'));
 
     await act(async () => {
       fireEvent.click(screen.getByText('Delete'));
     });
 
-    const check = await medplum.readResource('Patient', patient.id as string);
-    expect(check).toBeUndefined();
+    try {
+      await medplum.readResource('Patient', patient.id as string);
+      fail('Should have thrown');
+    } catch (err) {
+      expect((err as OperationOutcome).id).toEqual('not-found');
+    }
   });
 
   test('JSON renders', async () => {
