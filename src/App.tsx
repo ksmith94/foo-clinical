@@ -39,6 +39,7 @@ export function App(): JSX.Element | null {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="" element={profile ? <HomePage /> : <LandingPage />} />
+            <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/:resourceType/:id/:tab" element={<MirrorPage />} />
