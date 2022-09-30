@@ -1,0 +1,38 @@
+.schedule-page {
+  display: flex;
+  justify-content: space-around;
+}
+
+.slot-list {
+  min-width: 620px;
+  height: max-content;
+}
+
+.medplum-calendar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-width: 620px;
+}
+
+@media screen and (max-width: 1000px) {
+  .schedule-page {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .medplum-calendar {
+    min-width: 100%;
+    padding: 0 4px;
+  }
+
+  .slot-list {
+    width: 100%;
+  }
+
+  .calendar-grid td {
+    width: 100px;
+    height: 50px;
+  }
+}

@@ -8,6 +8,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { MirrorPage } from './pages/MirrorPage';
 import { SearchPage } from './pages/SearchPage';
 import { SignInPage } from './pages/SignInPage';
+import { SchedulePage } from './pages/SchedulePage';
 
 export function App(): JSX.Element | null {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ export function App(): JSX.Element | null {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="" element={profile ? <HomePage /> : <LandingPage />} />
+            <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/:resourceType/:id/:tab" element={<MirrorPage />} />
